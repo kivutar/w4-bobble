@@ -16,7 +16,7 @@ endif
 # wasm-opt flags
 WASM_OPT_FLAGS = -Oz --zero-filled-memory --strip-producers --enable-bulk-memory
 
-all:
+all: sprites.go
 	@mkdir -p build
 	$(GO) build $(GOFLAGS) -o build/cart.wasm .
 ifneq ($(DEBUG), 1)
@@ -26,6 +26,10 @@ else
 	$(WASM_OPT) $(WASM_OPT_FLAGS) build/cart.wasm -o build/cart.wasm
 endif
 endif
+
+sprites.go:
+	echo "package main" > sprites.go
+	w4 png2src --go *.png >> sprites.go
 
 .PHONY: clean
 clean:
