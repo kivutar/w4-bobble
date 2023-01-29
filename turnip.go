@@ -23,7 +23,7 @@ var turnip_stand_anim = Anim{
 
 var turnip_jump_anim = Anim{
 	frames: [][64]byte{
-		turnip_spr2,
+		turnip_spr0,
 	},
 }
 
@@ -33,7 +33,13 @@ type turnip struct {
 	flip uint
 }
 
+func (self *turnip) ontheground() bool {
+	return level[int((self.y+self.width)/16)][int(self.x/16)] != 0x1 && level[int((self.y+16)/16)][int((self.x+self.width-1)/16)] != 0x1
+}
+
 func (self *turnip) update(pad uint8) {
+	grounded := self.ontheground()
+
 	if pad&w4.BUTTON_LEFT != 0 {
 		self.xaccel = -0.1
 	} else if pad&w4.BUTTON_RIGHT != 0 {
@@ -45,13 +51,14 @@ func (self *turnip) update(pad uint8) {
 	self.xspeed += self.xaccel
 	self.yspeed += self.yaccel
 
-	if level[int((self.y+self.width)/16)][int(self.x/16)] != 0x1 && level[int((self.y+16)/16)][int((self.x+self.width-1)/16)] != 0x1 {
+	if grounded {
 		self.yaccel = 0.2
 	} else {
 		self.y = float64(int(self.y/16)) * 16
 		self.yspeed = 0
 		self.yaccel = 0
 		if pad&w4.BUTTON_1 != 0 {
+			w4.Tone(262, 1, 100, w4.TONE_PULSE2)
 			self.yspeed = -4
 		}
 	}
@@ -80,10 +87,12 @@ func (self *turnip) update(pad uint8) {
 		self.flip = 0
 	}
 
-	if self.xspeed == 0 {
-		self.anim = &turnip_stand_anim
-	} else {
+	if self.yspeed != 0 {
+		self.anim = &turnip_jump_anim
+	} else if pad&w4.BUTTON_RIGHT != 0 || pad&w4.BUTTON_LEFT != 0 {
 		self.anim = &turnip_run_anim
+	} else if self.xspeed == 0 {
+		self.anim = &turnip_stand_anim
 	}
 
 	self.anim.counter++
