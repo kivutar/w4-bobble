@@ -21,6 +21,12 @@ var turnip_stand_anim = Anim{
 	},
 }
 
+var turnip_jump_anim = Anim{
+	frames: [][64]byte{
+		turnip_spr2,
+	},
+}
+
 type turnip struct {
 	rigid
 	anim *Anim
@@ -29,15 +35,44 @@ type turnip struct {
 
 func (self *turnip) update(pad uint8) {
 	if pad&w4.BUTTON_LEFT != 0 {
-		self.xspeed -= 0.1
+		self.xaccel = -0.1
+	} else if pad&w4.BUTTON_RIGHT != 0 {
+		self.xaccel = 0.1
+	} else {
+		self.xaccel = 0
 	}
-	if pad&w4.BUTTON_RIGHT != 0 {
-		self.xspeed += 0.1
+
+	self.xspeed += self.xaccel
+	self.yspeed += self.yaccel
+
+	if level[int((self.y+self.width)/16)][int(self.x/16)] != 0x1 && level[int((self.y+16)/16)][int((self.x+self.width-1)/16)] != 0x1 {
+		self.yaccel = 0.2
+	} else {
+		self.y = float64(int(self.y/16)) * 16
+		self.yspeed = 0
+		self.yaccel = 0
+		if pad&w4.BUTTON_1 != 0 {
+			self.yspeed = -4
+		}
 	}
 
 	self.xspeed = clamp(self.xspeed, -2, 2)
+	self.yspeed = clamp(self.yspeed, -4, 4)
 	self.x += self.xspeed
+	self.y += self.yspeed
 	self.xspeed = xfriction(self.xspeed, pad)
+
+	if level[int((self.y)/16)][int((self.x+self.width)/16)] == 0x1 && self.xspeed > 0 {
+		self.x = float64(int(self.x/16))*16 + 16 - self.width
+		self.xspeed = 0
+		self.xaccel = 0
+	}
+
+	if level[int((self.y)/16)][int((self.x)/16)] == 0x1 && self.xspeed < 0 {
+		self.x = float64(int(self.x/16))*16 + 16
+		self.xspeed = 0
+		self.xaccel = 0
+	}
 
 	if self.xspeed > 0 {
 		self.flip = w4.BLIT_FLIP_X
@@ -56,5 +91,5 @@ func (self *turnip) update(pad uint8) {
 
 func (self *turnip) draw() {
 	*w4.DRAW_COLORS = 0x241
-	w4.Blit(&self.anim.frames[(self.anim.counter/8)%len(self.anim.frames)][0], int(self.x), int(self.y), 16, 16, w4.BLIT_2BPP|self.flip)
+	w4.Blit(&self.anim.frames[(self.anim.counter/8)%len(self.anim.frames)][0], int(self.x)-2, int(self.y), 16, 16, w4.BLIT_2BPP|self.flip)
 }
