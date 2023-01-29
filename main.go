@@ -30,7 +30,8 @@ type rigid struct {
 	yaccel float64
 }
 
-var tur = turnip{rigid: rigid{x: 16, y: 16, width: 12, height: 16}}
+var tur1 = turnip{rigid: rigid{x: 32, y: 32, width: 12, height: 16}}
+var tur2 = turnip{rigid: rigid{x: 16, y: 16, width: 12, height: 16}}
 
 //go:export start
 func start() {
@@ -44,9 +45,11 @@ var block_spr = [64]byte{0x55, 0x55, 0x55, 0x55, 0x7f, 0xff, 0xff, 0xfd, 0x6f, 0
 
 //go:export update
 func update() {
-	tur.update(*w4.GAMEPAD1)
+	tur1.update(*w4.GAMEPAD1)
+	tur2.update(*w4.GAMEPAD2)
 
-	tur.draw()
+	tur1.draw()
+	tur2.draw()
 
 	*w4.DRAW_COLORS = 0x241
 	for y, line := range level {

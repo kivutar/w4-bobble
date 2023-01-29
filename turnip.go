@@ -101,6 +101,6 @@ func (self *turnip) update(pad uint8) {
 }
 
 func (self *turnip) draw() {
-	*w4.DRAW_COLORS = 0x241
-	w4.Blit(&self.anim.frames[(self.anim.counter/8)%len(self.anim.frames)][0], int(self.x)-2, int(self.y), 16, 16, w4.BLIT_2BPP|self.flip)
+	*w4.DRAW_COLORS = 0x240
+	w4.Blit(&self.anim.frames[(self.anim.counter/8)%len(self.anim.frames)][0], int(self.x)-2, int(self.y)+1, 16, 16, w4.BLIT_2BPP|self.flip)
 }
