@@ -68,20 +68,21 @@ func clamp(v, min, max float64) float64 {
 
 func (self *bar) update(pad uint8) {
 	if pad&w4.BUTTON_UP != 0 {
-		self.speed -= 0.1
+		self.yspeed -= 0.1
 	}
 	if pad&w4.BUTTON_DOWN != 0 {
-		self.speed += 0.1
+		self.yspeed += 0.1
 	}
 
-	self.speed = clamp(self.speed, -2, 2)
+	self.yspeed = clamp(self.yspeed, -2, 2)
 
-	self.y += self.speed
+	self.y += self.yspeed
+	self.y = clamp(self.y, 0, 160-self.height)
 
-	self.speed = friction(self.speed, pad)
+	self.yspeed = friction(self.yspeed, pad)
 }
 
 func (self *bar) draw() {
 	*w4.DRAW_COLORS = 2
-	w4.Blit(&bar_spr[0], int(self.x), int(self.y), 8, 32, w4.BLIT_1BPP)
+	w4.Blit(&bar_spr[0], int(self.x), int(self.y), uint(self.width), uint(self.height), w4.BLIT_1BPP)
 }
