@@ -47,9 +47,7 @@ func (self *turnip) update(pad uint8) {
 	self.xspeed += self.xaccel
 	self.yspeed += self.yaccel
 
-	if !grounded {
-		self.yaccel = 0.2
-	} else {
+	if grounded && self.yspeed >= 0 {
 		self.y = float64(int(self.y/16)) * 16
 		self.yspeed = 0
 		self.yaccel = 0
@@ -57,7 +55,8 @@ func (self *turnip) update(pad uint8) {
 			w4.Tone(300, 1, 100, w4.TONE_TRIANGLE)
 			self.yspeed = -4
 		}
-
+	} else {
+		self.yaccel = 0.2
 	}
 
 	self.xspeed = clamp(self.xspeed, -2, 2)
