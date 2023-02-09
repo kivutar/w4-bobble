@@ -1,6 +1,8 @@
 package main
 
-import "cart/w4"
+import (
+	"cart/w4"
+)
 
 type ToneParams struct {
 	freq1   uint32 // First frequency.
@@ -70,13 +72,13 @@ func toneSub(p ToneParams) {
 	)
 }
 
-func (self Track) Step() {
+func (self *Track) Step() {
 	if self.wait == 0 {
 		// Musical tone to be played.
 		tone := self.tones[self.next]
 		note := tone[0]
 		wait := tone[1]
-		//flags := tone[2]
+		// flags := tone[2]
 
 		// Instrument in use.
 		instrument := self.instrument % uint8(len(TrackInstruments))
