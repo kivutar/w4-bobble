@@ -60,5 +60,6 @@ func update() {
 		}
 	}
 
-	song.Step()
+	chan1.Step()
+	// chan2.Step()
 }
