@@ -60,6 +60,5 @@ func update() {
 		}
 	}
 
-	chan1.Step()
-	// chan2.Step()
+	simplesong.Step()
 }
