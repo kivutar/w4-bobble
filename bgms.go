@@ -2,7 +2,7 @@ package main
 
 // Soundtrack: simplesong
 var simplesong = Track{
-	ticks: 8,
+	ticks: 4,
 	channels: []*Channel{
 		{
 			instrument: 0,
