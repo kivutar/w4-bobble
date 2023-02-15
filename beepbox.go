@@ -2,6 +2,7 @@ package main
 
 import (
 	"cart/w4"
+	"math"
 )
 
 type ToneParams struct {
@@ -17,14 +18,14 @@ type ToneParams struct {
 }
 
 // Musical note frequencies used by tracks.
-var TrackNotes = []uint16{
-	58, 62, 65, 69,
-	73, 78, 82, 87, 92, 98, 104, 110, 117,
-	123, 139, 147, 156, 165, 175, 185, 196, 208,
-	220, 233, 247, 262, 277, 293, 311, 330, 349,
-	370, 392, 415, 440, 466, 493, 523, 554, 587,
-	622, 659, 698, 740, 784, 830, 880, 932, 987,
-	1046}
+// var TrackNotes = []uint16{
+// 	44, 46, 49, 52, 55, 58, 62, 65,
+// 	69, 73, 78, 82, 87, 92, 98, 104, 110, 117,
+// 	123, 139, 147, 156, 165, 175, 185, 196, 208,
+// 	220, 233, 247, 262, 277, 293, 311, 330, 349,
+// 	370, 392, 415, 440, 466, 493, 523, 554, 587,
+// 	622, 659, 698, 740, 784, 830, 880, 932, 987,
+// 	1046}
 
 type Channel struct {
 	next       int
@@ -49,6 +50,25 @@ func toneSub(p ToneParams) {
 	)
 }
 
+func noteFreq(n uint16) uint16 {
+	// var freqs = []uint16{
+	// 	28160, // A10
+	// 	29834,
+	// 	31609,
+	// 	33488,
+	// 	35479,
+	// 	37589,
+	// 	39824,
+	// 	42192,
+	// 	44701,
+	// 	47359,
+	// 	50175,
+	// 	53159,
+	// }
+	//return freqs[n%12] >> (10 - n/12)
+	return uint16(math.Pow(2, (float64(n)-57)/12) * 440)
+}
+
 func (self *Track) Step() {
 	for _, channel := range self.channels {
 		// Instrument in use.
@@ -61,18 +81,17 @@ func (self *Track) Step() {
 			wait := tone[2] / 2
 
 			// Play tone...
-			if int(note) < len(TrackNotes) {
-				toneSub(ToneParams{
-					freq1:   uint(TrackNotes[note]),
-					freq2:   0,
-					attack:  0,
-					decay:   0,
-					sustain: 0,
-					release: uint(wait) * self.ticks / 2,
-					volume:  100,
-					channel: uint(instrument),
-				})
-			}
+			toneSub(ToneParams{
+				//freq1: uint(TrackNotes[note-18]),
+				freq1:   uint(noteFreq(note)),
+				freq2:   0,
+				attack:  0,
+				decay:   0,
+				sustain: 0,
+				release: uint(wait) * self.ticks / 2,
+				volume:  100,
+				channel: uint(instrument),
+			})
 
 			channel.next++
 			channel.next %= len(channel.tones)
