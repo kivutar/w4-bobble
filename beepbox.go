@@ -18,12 +18,13 @@ type ToneParams struct {
 
 // Musical note frequencies used by tracks.
 var TrackNotes = []uint16{
-	0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120,
-	130, 140, 150, 160, 170, 180, 190, 200, 210,
-	220, 230, 250, 260, 280, 290, 310, 330, 350,
-	370, 390, 410, 440, 460, 490, 520, 550, 600,
-	620, 660, 700, 750, 780, 840, 880, 940, 980,
-	1000}
+	58, 62, 65, 69,
+	73, 78, 82, 87, 92, 98, 104, 110, 117,
+	123, 139, 147, 156, 165, 175, 185, 196, 208,
+	220, 233, 247, 262, 277, 293, 311, 330, 349,
+	370, 392, 415, 440, 466, 493, 523, 554, 587,
+	622, 659, 698, 740, 784, 830, 880, 932, 987,
+	1046}
 
 type Channel struct {
 	next       int
@@ -67,7 +68,7 @@ func (self *Track) Step() {
 					attack:  0,
 					decay:   0,
 					sustain: 0,
-					release: uint(wait) * self.ticks,
+					release: uint(wait) * self.ticks / 2,
 					volume:  100,
 					channel: uint(instrument),
 				})
