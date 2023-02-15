@@ -17,7 +17,8 @@ type ToneParams struct {
 }
 
 // Musical note frequencies used by tracks.
-var TrackNotes = [37]uint16{
+var TrackNotes = []uint16{
+	0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120,
 	130, 140, 150, 160, 170, 180, 190, 200, 210,
 	220, 230, 250, 260, 280, 290, 310, 330, 350,
 	370, 390, 410, 440, 460, 490, 520, 550, 600,
@@ -29,7 +30,7 @@ type Channel struct {
 	counter    uint
 	instrument uint8
 	flags      [2]uint8
-	tones      [][3]byte
+	tones      [][3]uint16
 }
 
 // A sound track is basically one fragment of a music.
@@ -52,11 +53,11 @@ func (self *Track) Step() {
 		// Instrument in use.
 		instrument := channel.instrument % 4
 
-		if uint(channel.tones[channel.next][0]) == channel.counter/self.ticks {
+		if uint(channel.tones[channel.next][0]) == channel.counter/(self.ticks/2) {
 			// Musical tone to be played.
 			tone := channel.tones[channel.next]
 			note := tone[1]
-			wait := tone[2]
+			wait := tone[2] / 2
 
 			// Play tone...
 			if int(note) < len(TrackNotes) {
