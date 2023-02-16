@@ -5,18 +5,6 @@ import (
 	"math"
 )
 
-type ToneParams struct {
-	freq1   uint // First frequency.
-	freq2   uint // Second frequency.
-	attack  uint // Attack (aggressive start).
-	decay   uint // Decay (smooth fading).
-	sustain uint // Sustain time.
-	release uint // Release time.
-	volume  uint // Volume.
-	channel uint // Audio channel. Each channel, except `0` and `1`, are different.
-	mode    uint // Audio mode. Only works for channels `0` and `1`.
-}
-
 type Channel struct {
 	next       int
 	counter    uint
