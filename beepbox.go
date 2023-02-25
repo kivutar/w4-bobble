@@ -15,8 +15,9 @@ type Channel struct {
 
 // A sound track is basically one fragment of a music.
 type Track struct {
-	ticks    uint
-	channels []*Channel
+	ticks     uint
+	sequences uint
+	channels  []*Channel
 }
 
 func noteFreq(n uint16) uint {
@@ -27,23 +28,23 @@ func (self *Track) Step() {
 	for _, channel := range self.channels {
 		instrument := uint(channel.instrument % 4)
 
-		if uint(channel.tones[channel.next][0]) == channel.counter/(self.ticks/2) {
+		if uint(channel.tones[channel.next][0]) == channel.counter/(self.ticks) {
 			// Musical tone to be played.
 			tone := channel.tones[channel.next]
 			note := tone[1]
 			wait := uint(tone[2])
 
-			if instrument == w4.TONE_NOISE {
+			if instrument == 3 {
 				w4.Tone(
-					noteFreq(note),
-					(wait*self.ticks/8)<<8,
+					noteFreq(0x3b),
+					(wait*self.ticks/2)<<8,
 					uint(channel.volume),
 					instrument,
 				)
 			} else {
 				w4.Tone(
 					noteFreq(note),
-					(wait*self.ticks/4)<<8,
+					(wait*self.ticks)<<8,
 					uint(channel.volume),
 					instrument,
 				)
@@ -53,6 +54,6 @@ func (self *Track) Step() {
 			channel.next %= len(channel.tones)
 		}
 		channel.counter++
-		channel.counter %= (12 * 32 * self.ticks / 2)
+		channel.counter %= (self.sequences * 32 * self.ticks)
 	}
 }
