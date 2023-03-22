@@ -596,7 +596,7 @@ var simplesong = Track{
 		},
 		{
 			instrument: 3,
-			volume:     100,
+			volume:     70,
 			tones: [][3]uint16{
 				{0xc0, 0x00, 0x05},
 				{0xc4, 0x05, 0x0f},
